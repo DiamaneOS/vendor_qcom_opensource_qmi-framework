@@ -54,7 +54,9 @@ static void qcci_log_init_once(void)
     if (init)
         return;
 
-
+#ifndef __ANDROID__
+	/* Android keeps no QMI configuration in /etc. QMI_LOG_LEVEL below
+	 * still applies. */
 	FILE *f = fopen(QMI_FW_CONF_FILE, "r");
     if (f) {
         char line[MAX_LINE_LENGTH];
@@ -81,6 +83,7 @@ static void qcci_log_init_once(void)
 
         fclose(f);
     }
+#endif
 
     const char *env = getenv("QMI_LOG_LEVEL");
     if (env) {
