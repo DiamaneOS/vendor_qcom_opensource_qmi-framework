@@ -1,0 +1,71 @@
+// Soong build of the QMI client side for Android vendor code: the QMI
+// client (QCCI) over QRTR, the message encoder and decoder, and the common
+// QMI types. Static libraries only, so each user links its own copy and no
+// shared library name clashes with a vendor's own QMI libraries.
+
+package {
+    default_applicable_licenses: ["vendor_qcom_opensource_qmi-framework_license"],
+}
+
+license {
+    name: "vendor_qcom_opensource_qmi-framework_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["SPDX-license-identifier-BSD-3-Clause"],
+    license_text: ["LICENSE"],
+}
+
+cc_library_headers {
+    name: "qmi_framework_headers",
+    vendor: true,
+    export_include_dirs: ["include"],
+}
+
+cc_defaults {
+    name: "qmi_framework_defaults",
+    vendor: true,
+    header_libs: ["qmi_framework_headers"],
+    export_header_lib_headers: ["qmi_framework_headers"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wundef",
+        "-Wstrict-prototypes",
+        "-Wno-trigraphs",
+        "-Wno-unused-parameter",
+        // The framework marks unused parameters by assigning them to themselves.
+        "-Wno-self-assign",
+        "-fno-short-enums",
+    ],
+}
+
+cc_library_static {
+    name: "libqmi_framework_encdec",
+    defaults: ["qmi_framework_defaults"],
+    srcs: [
+        "qencdec/qmi_idl_accessor.c",
+        "qencdec/qmi_idl_lib.c",
+    ],
+}
+
+cc_library_static {
+    name: "libqmi_framework_common",
+    defaults: ["qmi_framework_defaults"],
+    srcs: ["common/common_v01.c"],
+}
+
+cc_library_static {
+    name: "libqmi_framework_cci",
+    defaults: ["qmi_framework_defaults"],
+    srcs: [
+        "qcci/qcci_common.c",
+        "qcci/qcci_os.c",
+        "qcci/qcci_xport_qrtr.c",
+    ],
+    // android/config.h stands in for the header autoconf generates.
+    local_include_dirs: [
+        "android",
+        "common",
+    ],
+    whole_static_libs: ["libqmi_framework_encdec"],
+    shared_libs: ["liblog"],
+}
