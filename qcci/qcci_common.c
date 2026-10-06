@@ -2289,6 +2289,7 @@ qmi_cci_error_type qmi_cci_get_service_list(
 
 #ifndef QMI_CLIENT_INSTANCE_ANY
 #define QMI_CLIENT_INSTANCE_ANY 0xffff
+#endif
 
 /**
  * @brief Get any service.
@@ -2308,7 +2309,6 @@ qmi_cci_error_type qmi_cci_get_any_service(
 	return qmi_cci_get_service_instance(service_obj,
 				QMI_CLIENT_INSTANCE_ANY, service_info);
 }
-#endif
 
 /**
  * @brief Get a specific service instance.
